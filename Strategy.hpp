@@ -8,24 +8,26 @@
 class Strategy
 {
 	private:
-	
+
 	/* No local vartiables. */
 	int max_depth;
-	
+
 	/* Results of strategy. */
 	int move_i, move_j;
-	
+
 	int color;
-	
+
 	public:
 	Strategy (int max_depth, int color);
-	
-	
+
+
 	int guess (GameEngine &engine, int depth, int color, int alpha, int beta);
+    void guess_self_move(GameEngine &engine);
 	int minimum_points (GameEngine& engine, int depth, int color, int &optimal_i, int& optimal_j, int alpha, int beta);
 	int maximum_points (GameEngine& engine, int depth, int color, int &optimal_i, int &optimal_j, int alpha, int beta);
-	void get_optimal (int &i, int &j); 
-		
+	void get_optimal (int &i, int &j);
+    void set_color(int color);
+
 	~Strategy ();
 };
 

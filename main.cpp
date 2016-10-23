@@ -32,15 +32,15 @@ void play_game (in_addr_t rem_ip, in_port_t rem_port);
 int main(int argc, const char * argv[]) {
     in_addr_t rem_ip;
     in_port_t rem_port;
-    
+
     std::cout << "Welcome to the reversi game.\n";
-    
+
     if (3 != argc)
     {
         cerr << "Incorrect number of arguments." << endl;
         return EXIT_FAILURE;
     }
-    
+
     inet_pton(AF_INET, argv[1], &rem_ip);
     rem_port = htons(atoi(argv[2]));
     try
@@ -51,7 +51,7 @@ int main(int argc, const char * argv[]) {
     {
         cerr << "FATAL " << str_error << endl;
     }
-    
+
     return EXIT_SUCCESS;
 }
 
@@ -61,15 +61,15 @@ void play_game (in_addr_t rem_ip, in_port_t rem_port)
     GameEngine *engine = new GameEngine();
     Strategy *plan = new Strategy (8, CELL_WHITE);
     string rem_msg;
-    
+
     if (!rplayer->connect())
     {
         ::perror("remote");
         return;
     }
-    
+
     rplayer->send_rnum("163050036");
-    
+
     while (true)
     {
         rem_msg = rplayer->receive_string();
@@ -80,9 +80,10 @@ void play_game (in_addr_t rem_ip, in_port_t rem_port)
         if ("START" == command)
         {
             string color = rem_msg.substr(msg_break + 1);
-            
-            engine->reset_board("WHITE" == color ? CELL_WHITE : CELL_BLACK);
+            int self_color = "WHITE" == color ? CELL_WHITE : CELL_BLACK;
+            engine->reset_board(self_color);
             engine->print_board();
+            plan->set_color(self_color);
 
             if (color == "BLACK")
                 continue;
@@ -92,23 +93,26 @@ void play_game (in_addr_t rem_ip, in_port_t rem_port)
             sscanf(rem_msg.c_str(), "%d%d", &i, &j);
             if (!engine->make_enemy_move(i, j))
             {
-                cerr << "Can't make this move.\n" << i << ' ' << j << endl;
+                cerr << "Can't make opponent move: " << i << " " << j << endl;
             }
         }
 
         cout << "Current Status" << endl;
         engine->print_board();
-        
+
         /*if (!engine->play_move(i, j))
         {
             cerr << "No moves to make." << endl;
             continue;
         }*/
-        
-        plan->guess (*engine, 0, CELL_WHITE, INT_MIN, INT_MAX); 
+
+        plan->guess_self_move(*engine);
         plan->get_optimal(i, j);
-        engine->make_move (i, j, CELL_WHITE);
-        
+        if(!engine->make_self_move(i, j))
+        {
+            cerr << "Can't make self move: " << i << " " << j << endl;
+        }
+
         std::cout << "Our move: " << i << ' ' << j << endl;
         cout << "After move:" << endl;
         engine->print_board();
