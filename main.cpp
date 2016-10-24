@@ -59,7 +59,7 @@ void play_game (in_addr_t rem_ip, in_port_t rem_port)
 {
     RemotePlayer *rplayer = new RemotePlayer(rem_ip, rem_port);
     GameEngine *engine = new GameEngine();
-    Strategy *plan = new Strategy (8, CELL_WHITE);
+    Strategy *plan = new Strategy (7, CELL_WHITE);
     string rem_msg;
 
     if (!rplayer->connect())

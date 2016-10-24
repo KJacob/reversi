@@ -59,7 +59,7 @@ int Strategy::minimum_points (GameEngine& engine, int depth, int our_color, int 
 				opponent.make_move(i, j, our_color);
 				points = guess(opponent, depth + 1, opponent_color, alpha, min_points);
 
-				if (points < min_points)
+				if (points <= min_points)
 				{
 					min_points = points;
 					optimal_i = i;
@@ -96,7 +96,7 @@ int Strategy::maximum_points (GameEngine& engine, int depth, int our_color, int 
 
 				points = guess(opponent, depth + 1, opponent_color, max_points, beta);
 
-				if (points > max_points)
+				if (points >= max_points)
 				{
 					/* Optimize here */
 					max_points = points;

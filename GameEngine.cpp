@@ -350,7 +350,7 @@ int GameEngine::evaluate (int color)
                 {
                     for(int l = -1; l <= 1; l++)
                     {
-                        if( i + k >= 0 && i + k <=8 && j + l >= 0 && j + l <= 8 && gameboard[i + k][j + l] == CELL_BLANK)
+                        if( i + k >= 0 && i + k <=7 && j + l >= 0 && j + l <= 7 && gameboard[i + k][j + l] == CELL_BLANK)
                         {
                             if(gameboard[i][j] == color)
                             {
@@ -437,7 +437,7 @@ int GameEngine::evaluate (int color)
     if(self_mobility_count > opp_mobility_count)
     {
         mobility_score = (100 * self_mobility_count) / (self_mobility_count + opp_mobility_count);
-    } else
+    } else if(opp_mobility_count > self_mobility_count)
     {
         mobility_score = -1 * (100 * opp_mobility_count) / (self_mobility_count + opp_mobility_count);
     }
