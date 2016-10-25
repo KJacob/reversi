@@ -21,10 +21,10 @@ class Strategy
 	Strategy (int max_depth, int color);
 
 
-	int guess (GameEngine &engine, int depth, int color, int alpha, int beta);
+	double guess (GameEngine &engine, int depth, int color, double alpha, double beta);
     void guess_self_move(GameEngine &engine);
-	int minimum_points (GameEngine& engine, int depth, int color, int &optimal_i, int& optimal_j, int alpha, int beta);
-	int maximum_points (GameEngine& engine, int depth, int color, int &optimal_i, int &optimal_j, int alpha, int beta);
+	double minimum_points (GameEngine& engine, int depth, int color, int &optimal_i, int& optimal_j, double alpha, double beta);
+	double maximum_points (GameEngine& engine, int depth, int color, int &optimal_i, int &optimal_j, double alpha, double beta);
 	void get_optimal (int &i, int &j);
     void set_color(int color);
 

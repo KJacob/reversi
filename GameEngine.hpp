@@ -44,10 +44,10 @@ public:
     void apply_color(int i, int j, int color, int dir_r, int dir_c);
     void make_move(int i, int j, int color);
     int num_valid_moves(int color);
-    bool make_self_move(int i, int j);
+    bool make_self_move(int &i, int &j);
     void print_board ();
 
-    int evaluate(int color);
+    double evaluate(int color);
 
     ~GameEngine();
 };
