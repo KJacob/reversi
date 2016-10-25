@@ -12,6 +12,7 @@
 
 using std::cout;
 using std::endl;
+using std::cerr;
 
 const int GameEngine::pos_weight_matrix[8][8] =
 {
@@ -273,14 +274,20 @@ void GameEngine::apply_color(int i, int j, int color, int dir_r, int dir_c)
     }
 }
 
-bool GameEngine::make_self_move(int i, int j)
+bool GameEngine::make_self_move(int &i, int &j)
 {
-    if(is_move_valid(i, j, color))
+    if(i >= 0 && i <= 7 && j >= 0 && j <= 7)
     {
-        make_move(i, j, color);
-        return true;
+        if(is_move_valid(i, j, color))
+        {
+            make_move(i, j, color);
+            return true;
+        }
+    } else
+    {
+        cerr<< "Attempting to play random move.";
+        return play_move(i, j);
     }
-
     return false;
 }
 
@@ -318,7 +325,7 @@ void GameEngine::print_board ()
 	}
 }
 
-int GameEngine::evaluate (int color)
+double GameEngine::evaluate (int color)
 {
     int i = 0, j = 0;
     int opp_color = color == CELL_WHITE ? CELL_BLACK : CELL_WHITE;
@@ -445,7 +452,7 @@ int GameEngine::evaluate (int color)
 
     net_score = 10 * cell_count_score + 801.724 * corner_score + 382.026 * corner_close_score + 78.922 * mobility_score + 74.396 * frontier_score + 10 * cell_score;
 
-    return (int)net_score;
+    return net_score;
 }
 
 GameEngine::~GameEngine()
