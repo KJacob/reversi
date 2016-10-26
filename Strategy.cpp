@@ -15,7 +15,10 @@ double Strategy::guess (GameEngine &engine, int depth, int our_color, double alp
 	int optimal_i, optimal_j;
 
 	if (depth == max_depth)
-		return engine.evaluate (our_color);
+	{
+		optimal_point = engine.evaluate (this->color);
+        return optimal_point;
+	}
 
 	/* this->color: Color of player of interest. */
 	if (our_color != this->color)
@@ -45,7 +48,7 @@ double Strategy::minimum_points (GameEngine& engine, int depth, int our_color, i
 {
 	int i, j;
 	int opponent_color = OPPONENT_COLOR(our_color);
-	double min_points = DBL_MAX;
+	double min_points = beta;
 	double points;
     bool has_valid_move = false;
 
@@ -77,7 +80,7 @@ double Strategy::minimum_points (GameEngine& engine, int depth, int our_color, i
 	}
     if(!has_valid_move)
     {
-        return engine.evaluate(our_color);
+        return engine.evaluate(this->color);
     }
 
 	return min_points;
@@ -87,7 +90,7 @@ double Strategy::maximum_points (GameEngine& engine, int depth, int our_color, i
 {
 	int i, j;
 	int opponent_color = OPPONENT_COLOR(our_color);
-	double max_points = -DBL_MAX;
+	double max_points = alpha;
 	double points;
     bool has_valid_move = false;
 
@@ -122,7 +125,7 @@ double Strategy::maximum_points (GameEngine& engine, int depth, int our_color, i
 
     if(!has_valid_move)
     {
-        return engine.evaluate(our_color);
+        return engine.evaluate(this->color);
     }
 
 	return max_points;
