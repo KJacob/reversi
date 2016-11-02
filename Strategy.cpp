@@ -1,5 +1,5 @@
 #include <iostream>
-#include <climits>
+#include <cfloat>
 #include "Strategy.hpp"
 
 Strategy::Strategy (int max_depth, int color)
@@ -8,15 +8,18 @@ Strategy::Strategy (int max_depth, int color)
 	this->color = color;
 }
 
-int Strategy::guess (GameEngine &engine, int depth, int our_color, int alpha, int beta)
+double Strategy::guess (GameEngine &engine, int depth, int our_color, double alpha, double beta)
 {
 	int i, j;
-	int optimal_point;
+	double optimal_point;
 	int optimal_i, optimal_j;
-	
+
 	if (depth == max_depth)
-		return engine.evaluate (our_color);
-	
+	{
+		optimal_point = engine.evaluate (this->color);
+        return optimal_point;
+	}
+
 	/* this->color: Color of player of interest. */
 	if (our_color != this->color)
 	{
@@ -25,13 +28,13 @@ int Strategy::guess (GameEngine &engine, int depth, int our_color, int alpha, in
 	else {
 		optimal_point = maximum_points (engine, depth, our_color, optimal_i, optimal_j, alpha, beta);
 	}
-	
+
 	if (depth == 0)
 	{
 		move_i = optimal_i;
 		move_j = optimal_j;
 	}
-	
+
 	return optimal_point;
 }
 
@@ -41,62 +44,70 @@ void Strategy::get_optimal (int &i, int &j)
 	j = move_j;
 }
 
-int Strategy::minimum_points (GameEngine& engine, int depth, int our_color, int &optimal_i, int &optimal_j, int alpha, int beta)
+double Strategy::minimum_points (GameEngine& engine, int depth, int our_color, int &optimal_i, int &optimal_j, double alpha, double beta)
 {
 	int i, j;
 	int opponent_color = OPPONENT_COLOR(our_color);
-	int min_points = INT_MAX;
-	int points;
-	
+	double min_points = beta;
+	double points;
+    bool has_valid_move = false;
+
 	for (i = 0; i < 8; ++i)
 	{
 		for (j = 0; j < 8; ++j)
 		{
 			GameEngine opponent = engine;
-			
+
 			if (opponent.is_move_valid(i, j, our_color))
 			{
+                has_valid_move = true;
 				opponent.make_move(i, j, our_color);
 				points = guess(opponent, depth + 1, opponent_color, alpha, min_points);
-				
-				if (points < min_points)
+
+				if (points <= min_points)
 				{
 					min_points = points;
 					optimal_i = i;
 					optimal_j = j;
 				}
-				
+
 				if (min_points <= alpha)
 				{
 				    return min_points;
 				}
 			}
 		}
-	}	
-	
+	}
+    if(!has_valid_move)
+    {
+        return engine.evaluate(this->color);
+    }
+
 	return min_points;
 }
 
-int Strategy::maximum_points (GameEngine& engine, int depth, int our_color, int &optimal_i, int &optimal_j, int alpha, int beta)
+double Strategy::maximum_points (GameEngine& engine, int depth, int our_color, int &optimal_i, int &optimal_j, double alpha, double beta)
 {
 	int i, j;
 	int opponent_color = OPPONENT_COLOR(our_color);
-	int max_points = INT_MIN;
-	int points;
-	
+	double max_points = alpha;
+	double points;
+    bool has_valid_move = false;
+
 	for (i = 0; i < 8; ++i)
 	{
 		for (j = 0; j < 8; ++j)
 		{
 			GameEngine opponent = engine;
-			
+
 			if (opponent.is_move_valid(i, j, our_color))
 			{
+                has_valid_move = true;
 				opponent.make_move(i, j, our_color);
-				
+
 				points = guess(opponent, depth + 1, opponent_color, max_points, beta);
-				
-				if (points > max_points)
+
+				if (points >= max_points)
 				{
 					/* Optimize here */
 					max_points = points;
@@ -104,13 +115,28 @@ int Strategy::maximum_points (GameEngine& engine, int depth, int our_color, int 
 					optimal_j = j;
 				}
 			}
-			
+
 			if (max_points >= beta)
 			{
 			    return max_points;
 			}
 		}
-	}	
-	
+	}
+
+    if(!has_valid_move)
+    {
+        return engine.evaluate(this->color);
+    }
+
 	return max_points;
+}
+
+void Strategy::set_color(int new_color)
+{
+    this->color = new_color;
+}
+
+void Strategy::guess_self_move(GameEngine &engine)
+{
+    this->guess(engine, 0, this->color, -DBL_MAX, DBL_MAX);
 }
