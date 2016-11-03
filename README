@@ -1,0 +1,19 @@
+README
+=====
+
+1. Compilation
+Enter the source directory and issue make.
+
+2. Running
+The make command will create an executable 'reversi'. To run the game, enter
+
+$ ./reversi <ip address of server> <port> [search depth]
+
+The paramter search depth is optional. If this paramter is not specified,
+ it will be set to a default value of 7.
+
+Example invocation:
+
+$ ./reversi 10.15.24.161 5001 8
+
+$ ./reversi 10.15.24.161 5001

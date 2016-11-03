@@ -46,6 +46,7 @@ public:
     int num_valid_moves(int color);
     bool make_self_move(int &i, int &j);
     void print_board ();
+    void print_points();
 
     double evaluate(int color);
 

@@ -16,14 +16,14 @@ using std::cerr;
 
 const int GameEngine::pos_weight_matrix[8][8] =
 {
-    {20, -3, 11, 8, 8, 11, -3, 20},
-    {-3, -7, -4, 1, 1, -4, -7, -3},
-    {11, -4, 2, 2, 2, 2, -4, 11},
-    {8, 1, 2, -3, -3, 2, 1, 8},
-    {8, 1, 2, -3, -3, 2, 1, 8},
-    {11, -4, 2, 2, 2, 2, -4, 11},
-    {-3, -7, -4, 1, 1, -4, -7, -3},
-    {20, -3, 11, 8, 8, 11, -3, 20}
+    {666,  -8,  8,  6,  6,   8,  -8,  666},
+    { -8, -24, -4, -3, -3,  -4, -24,   -8},
+    {  8,  -4,  7,  4,  4,   7,  -4,    8},
+    {  6,  -3,  4,  0,  0,   4,  -3,    6},
+    {  6,  -3,  4,  0,  0,   4,  -3,    6},
+    {  8,  -4,  7,  4,  4,   7,  -4,    8},
+    { -8, -24, -4, -3, -3,  -4,  -24,  -8},
+    {666,  -8,  8,  6,  6,   8,  -8,  666}
 };
 
 GameEngine::GameEngine()
@@ -328,6 +328,33 @@ void GameEngine::print_board ()
 
 		cout << std::endl;
 	}
+}
+
+void GameEngine::print_points ()
+{
+	int black, white;
+	black = white = 0;
+
+	int i, j;
+
+	for (i = 0; i < 8; ++i)
+	{
+		for (j = 0; j < 8; ++j)
+		{
+			if (CELL_WHITE == gameboard[i][j])
+			{
+				white++;
+			}
+			else if (CELL_BLACK == gameboard[i][j])
+			{
+				black++;
+			}
+			else ;
+		}
+	}
+
+	cout << "White: " << white << " Black: " << black << endl;
+	return;
 }
 
 double GameEngine::evaluate (int color)
