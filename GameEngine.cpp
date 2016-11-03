@@ -56,6 +56,11 @@ bool GameEngine::is_move_valid(int i, int j, int color)
     int c, r;
     int n_enemy_color;
 
+    if ( i < 0 || i > 7 || j < 0 || j > 7)
+    {
+        return false;
+    }
+
     if (gameboard[i][j] != CELL_BLANK) {
         return false;
     }
@@ -450,7 +455,7 @@ double GameEngine::evaluate (int color)
     }
 
 
-    net_score = 10 * cell_count_score + 801.724 * corner_score + 382.026 * corner_close_score + 78.922 * mobility_score + 74.396 * frontier_score + 10 * cell_score;
+    net_score = 10 * cell_count_score + 800 * corner_score + 380 * corner_close_score + 70 * mobility_score + 70 * frontier_score + 10 * cell_score;
 
     return net_score;
 }
