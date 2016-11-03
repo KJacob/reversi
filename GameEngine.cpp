@@ -330,6 +330,33 @@ void GameEngine::print_board ()
 	}
 }
 
+void GameEngine::print_points ()
+{
+	int black, white;
+	black = white = 0;
+
+	int i, j;
+
+	for (i = 0; i < 8; ++i)
+	{
+		for (j = 0; j < 8; ++j)
+		{
+			if (CELL_WHITE == gameboard[i][j])
+			{
+				white++;
+			}
+			else if (CELL_BLACK == gameboard[i][j])
+			{
+				black++;
+			}
+			else ;
+		}
+	}
+
+	cout << "White: " << white << " Black: " << black << endl;
+	return;
+}
+
 double GameEngine::evaluate (int color)
 {
     int i = 0, j = 0;

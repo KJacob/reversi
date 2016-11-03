@@ -21,31 +21,41 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#define DEFAULT_SEARCH_DEPTH 7
+
 using std::cerr;
 using std::endl;
 using std::to_string;
 using std::cout;
 
 /* Forward declarations. */
-void play_game (in_addr_t rem_ip, in_port_t rem_port);
+void play_game (in_addr_t rem_ip, in_port_t rem_port, int search_depth);
 
 int main(int argc, const char * argv[]) {
     in_addr_t rem_ip;
     in_port_t rem_port;
+    int search_depth = DEFAULT_SEARCH_DEPTH;
 
     std::cout << "Welcome to the reversi game.\n";
 
-    if (3 != argc)
+    if (3 > argc)
     {
         cerr << "Incorrect number of arguments." << endl;
         return EXIT_FAILURE;
     }
+    
+    if (4 == argc)
+    {
+    	search_depth = atoi(argv[3]);
+    }
+
+    cout << "Selected difficulty level is " << search_depth << endl;
 
     inet_pton(AF_INET, argv[1], &rem_ip);
     rem_port = htons(atoi(argv[2]));
     try
     {
-        play_game(rem_ip, rem_port);
+        play_game(rem_ip, rem_port, search_depth);
     }
     catch (string &str_error)
     {
@@ -55,11 +65,11 @@ int main(int argc, const char * argv[]) {
     return EXIT_SUCCESS;
 }
 
-void play_game (in_addr_t rem_ip, in_port_t rem_port)
+void play_game (in_addr_t rem_ip, in_port_t rem_port, int search_depth)
 {
     RemotePlayer *rplayer = new RemotePlayer(rem_ip, rem_port);
     GameEngine *engine = new GameEngine();
-    Strategy *plan = new Strategy (7, CELL_WHITE);
+    Strategy *plan = new Strategy (search_depth, CELL_WHITE);
     string rem_msg;
 
     if (!rplayer->connect())
@@ -116,6 +126,7 @@ void play_game (in_addr_t rem_ip, in_port_t rem_port)
         std::cout << "Our move: " << i << ' ' << j << endl;
         cout << "After move:" << endl;
         engine->print_board();
+        engine->print_points();
 
         rplayer->send_string(to_string(i) + " " + to_string(j));
     }
