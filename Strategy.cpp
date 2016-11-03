@@ -44,6 +44,12 @@ void Strategy::get_optimal (int &i, int &j)
 	j = move_j;
 }
 
+void Strategy::set_optimal_move(int i, int j)
+{
+    this->move_i = i;
+    this->move_j = j;
+}
+
 double Strategy::minimum_points (GameEngine& engine, int depth, int our_color, int &optimal_i, int &optimal_j, double alpha, double beta)
 {
 	int i, j;
@@ -138,5 +144,119 @@ void Strategy::set_color(int new_color)
 
 void Strategy::guess_self_move(GameEngine &engine)
 {
-    this->guess(engine, 0, this->color, -DBL_MAX, DBL_MAX);
+ //this->guess(engine, 0, this->color, -DBL_MAX, DBL_MAX);
+    this->alpha_beta_guess(engine, 0, -DBL_MAX, DBL_MAX, this->color);
 }
+
+double Strategy::alpha_beta_guess(GameEngine &engine, int depth, double alpha, double beta, int color)
+{
+    int opp_color = OPPONENT_COLOR(color);
+    bool is_terminal = true;
+    double points;
+    int optimal_i = -1;
+    int optimal_j = -1;
+
+    if (depth == this->max_depth)
+    {
+        return engine.evaluate(this->color);
+    }
+
+
+    if (color ==  this->color)
+    {
+        points = -DBL_MAX;
+        for (int i = 0; i < 8; i++)
+        {
+            for (int j = 0; j < 8; j++)
+            {
+                if (engine.is_move_valid(i, j, color))
+                {
+                    is_terminal = false;
+                    GameEngine tmp_engine = engine;
+                    tmp_engine.make_move(i, j, color);
+                    double tmp_points = alpha_beta_guess(tmp_engine, depth + 1, alpha, beta, opp_color);
+
+                    if (tmp_points >= points)
+                    {
+                        points = tmp_points;
+                        if (depth == 0)
+                        {
+                            optimal_i = i;
+                            optimal_j = j;
+                        }
+                    }
+                    if (points >= alpha)
+                    {
+                        alpha = points;
+                    }
+                    if (beta <= alpha)
+                    {
+                        if (depth == 0)
+                        {
+                            set_optimal_move(optimal_i, optimal_j);
+                        }
+                        return points;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        points =  DBL_MAX;
+        for (int i = 0; i < 8; i++)
+        {
+            for (int j = 0; j < 8; j++)
+            {
+                if (engine.is_move_valid(i, j, color))
+                {
+                    is_terminal = false;
+                    GameEngine tmp_engine = engine;
+                    tmp_engine.make_move(i, j, color);
+                    double tmp_points = alpha_beta_guess(tmp_engine, depth + 1, alpha, beta, opp_color);
+
+                    if (tmp_points <= points)
+                    {
+                        points = tmp_points;
+                        if (depth == 0)
+                        {
+                            optimal_i = i;
+                            optimal_j = j;
+                        }
+                    }
+                    if (points <= beta)
+                    {
+                        beta = points;
+                    }
+                    if (beta <= alpha)
+                    {
+                        if (depth == 0)
+                        {
+                            set_optimal_move(optimal_i, optimal_j);
+                        }
+                        return points;
+                    }
+                }
+            }
+        }
+    }
+
+    if (is_terminal)
+    {
+        return engine.evaluate(this->color);
+    }
+
+    if (depth == 0)
+    {
+        set_optimal_move(optimal_i, optimal_j);
+    }
+
+    return points;
+}
+
+
+
+
+
+
+
